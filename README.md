@@ -11,17 +11,15 @@ JadedSync is an upcoming data syncing plugin for Paper/Velocity servers. It is d
 
 ## Maven
 ```xml
-<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
 ```
 ```xml
 <dependency>
-	    <groupId>com.github.JadedMC</groupId>
-	    <artifactId>JadedSync</artifactId>
-	    <version>-{VERSION}</version>
-	</dependency>
+    <groupId>com.github.JadedMC</groupId>
+    <artifactId>JadedSync</artifactId>
+    <version>-{VERSION}</version>
+</dependency>
 ```
