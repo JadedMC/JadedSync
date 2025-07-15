@@ -24,10 +24,15 @@
  */
 package net.jadedmc.jadedsync.database;
 
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.jadedmc.jadedsync.JadedSyncVelocityPlugin;
+import org.bson.Document;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
+
+import java.net.InetSocketAddress;
 
 /**
  * Manages the connection process to Redis.
@@ -52,6 +57,8 @@ public class Redis {
         String password = plugin.getConfig().getString("Redis.password");
 
         jedisPool = new JedisPool(jedisPoolConfig, host, port, username, password);
+
+        subscribe();
     }
 
     public JedisPool jedisPool() {
@@ -80,5 +87,51 @@ public class Redis {
         try(Jedis jedis = jedisPool.getResource()) {
             jedis.del(key);
         }
+    }
+
+    private void subscribe() {
+        new Thread("Redis Subscriber") {
+            @Override
+            public void run() {
+
+                try (Jedis jedis = jedisPool.getResource()) {
+                    jedis.subscribe(new JedisPubSub() {
+                        @Override
+                        public void onMessage(String channel, String msg) {
+                            String[] args = msg.split(" ");
+
+                            if(!args[0].equals("proxy")) {
+                                return;
+                            }
+
+                            switch(args[1].toLowerCase()) {
+                                case "register" -> {
+                                    final String serverName = args[2];
+
+                                    Document instance = Document.parse(jedis.get("jadedsync:servers:backend:" + serverName));
+                                    String name = instance.getString("serverName");
+                                    InetSocketAddress address = new InetSocketAddress(instance.getString("address"), instance.getInteger("port"));
+                                    ServerInfo server = new ServerInfo(name, address);
+                                    plugin.getProxyServer().registerServer(server);
+                                }
+
+                                case "remove" -> {
+                                    final String serverName = args[2];
+
+                                    Document instance = Document.parse(jedis.get("jadedsync:servers:backend:" + serverName));
+                                    String name = instance.getString("serverName");
+                                    InetSocketAddress address = new InetSocketAddress(instance.getString("address"), instance.getInteger("port"));
+                                    ServerInfo server = new ServerInfo(name, address);
+                                    plugin.getProxyServer().unregisterServer(server);
+                                }
+                            }
+                        }
+                    }, "jadedsync");
+                }
+                catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }.start();
     }
 }

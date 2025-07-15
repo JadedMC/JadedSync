@@ -69,6 +69,12 @@ public class Redis {
         }
     }
 
+    public void publishAsync(@NotNull final String channel, @NotNull final String message) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            publish(channel, message);
+        });
+    }
+
     public void set(String key, String value) {
         try(Jedis jedis = jedisPool.getResource()) {
             jedis.set(key, value);

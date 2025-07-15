@@ -27,6 +27,7 @@ package net.jadedmc.jadedsync;
 import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import net.jadedmc.jadedsync.api.integration.IntegrationManager;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayerManager;
+import net.jadedmc.jadedsync.api.server.InstanceMonitor;
 import net.jadedmc.jadedsync.config.ConfigManager;
 import net.jadedmc.jadedsync.config.HookManager;
 import net.jadedmc.jadedsync.database.Redis;
@@ -37,6 +38,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class JadedSyncBukkitPlugin extends JavaPlugin {
     private ConfigManager configManager;
     private HookManager hookManager;
+    private InstanceMonitor instanceMonitor;
     private IntegrationManager integrationManager;
     private JadedSyncPlayerManager jadedSyncPlayerManager;
     private Redis redis;
@@ -52,6 +54,7 @@ public final class JadedSyncBukkitPlugin extends JavaPlugin {
         configManager = new ConfigManager(this);
         hookManager = new HookManager(this);
         redis = new Redis(this);
+        instanceMonitor = new InstanceMonitor(this);
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
@@ -59,7 +62,8 @@ public final class JadedSyncBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        // Deletes the search from Redis
+        redis.del("jadedsync:servers:backend:" + this.instanceMonitor.getCurrentInstance().getName());
     }
 
     public ConfigManager getConfigManager() {
@@ -68,6 +72,10 @@ public final class JadedSyncBukkitPlugin extends JavaPlugin {
 
     public HookManager getHookManager() {
         return this.hookManager;
+    }
+
+    public InstanceMonitor getInstanceMonitor() {
+        return this.instanceMonitor;
     }
 
     public IntegrationManager getIntegrationManager() {

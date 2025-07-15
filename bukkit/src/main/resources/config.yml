@@ -19,3 +19,6 @@ Redis:
   username: ""
   password: ""
   set: false
+
+Server:
+  name: "server"

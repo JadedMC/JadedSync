@@ -92,6 +92,10 @@ public class JadedSyncVelocityPlugin {
         return config;
     }
 
+    public ProxyServer getProxyServer() {
+        return proxyServer;
+    }
+
     public Redis getRedis() {
         return redis;
     }
