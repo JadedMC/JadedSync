@@ -1,0 +1,6 @@
+name: JadedSync
+version: '1.0'
+main: net.jadedmc.jadedsync.JadedSyncBukkitPlugin
+api-version: '1.21'
+authors: [ JadedMC ]
+website: https://www.jadedmc.net
