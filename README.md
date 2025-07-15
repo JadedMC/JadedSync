@@ -1,0 +1,3 @@
+# JadedSync &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/JadedMC/Gemstone/blob/master/LICENSE)
+
+JadedSync is an upcoming data syncing plugin for Paper/Velocity servers. It is designed for developers and networks looking to easily scale their plugins across multiple servers and proxies through the use of Redis. It comes with an API for other plugins to take advantage of in order to easily communicate across servers.
