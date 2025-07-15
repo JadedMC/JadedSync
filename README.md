@@ -9,6 +9,14 @@
 
 JadedSync is an upcoming data syncing plugin for Paper/Velocity servers. It is designed for developers and networks looking to easily scale their plugins across multiple servers and proxies through the use of Redis. It comes with an API for other plugins to take advantage of in order to easily communicate across servers.
 
+Looking for a list of plugins that support JadedSync? Check out the [Support Plugins](https://github.com/JadedMC/JadedSync/wiki/Supported-Plugins) page.
+
+## Features
+* Cross-Server (and Cross-Proxy) communication.
+* Automatically add and remove servers from the proxy when a server is started/stopped.
+* Remotely control servers from other servers on the network.
+* API for plugins to easily become cross-server compatible.
+
 ## Maven
 ```xml
 <repository>
