@@ -37,7 +37,6 @@ public class LuckPermsIntegration extends Integration {
 
     @Override
     public String getPlayerIntegration(@NotNull final JadedSyncPlayer player) {
-        System.out.println("{\"rank\": \"" + LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId()).getPrimaryGroup() + "\"}");
         return "{\"rank\": \"" + LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId()).getPrimaryGroup() + "\"}";
     }
 }
