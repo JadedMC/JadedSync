@@ -24,6 +24,7 @@
  */
 package net.jadedmc.jadedsync.api.player;
 
+import com.destroystokyo.paper.profile.ProfileProperty;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import org.bson.Document;
@@ -42,6 +43,7 @@ public class JadedSyncPlayer {
     private final JadedSyncBukkitPlugin plugin;
     private final UUID uuid;
     private final String name;
+    private String skin = "";
     private final Map<String, String> integrations = new HashMap<>();
     private long lastSynced = -1;
 
@@ -55,6 +57,14 @@ public class JadedSyncPlayer {
         this.plugin = plugin;
         this.uuid = player.getUniqueId();
         this.name = player.getName();
+
+        for(final ProfileProperty property : player.getPlayerProfile().getProperties()) {
+            if(!property.getName().equals("textures")) {
+                continue;
+            }
+
+            this.skin = property.getValue();
+        }
 
         this.updateIntegrations();
     }
@@ -72,6 +82,7 @@ public class JadedSyncPlayer {
 
         this.uuid = UUID.fromString(document.getString("uuid"));
         this.name = document.getString("name");
+        this.skin = document.getString("skin");
 
         final Document integrationsDocument = document.get("integrations", Document.class);
         for(final String integration : integrations.keySet()) {
@@ -134,7 +145,8 @@ public class JadedSyncPlayer {
     public String toJson() {
         final Document document = new Document()
                 .append("uuid", this.uuid.toString())
-                .append("name", this.name);
+                .append("name", this.name)
+                .append("skin", this.skin);
 
         final Document integrationsDocument = new Document();
 
@@ -155,6 +167,15 @@ public class JadedSyncPlayer {
 
         // Convert Bson to Json.
         return document.toJson();
+    }
+
+    /**
+     * Get the base64 encoding of the player's skin.
+     * Useful for displaying player heads cross-server.
+     * @return Base64 skin encoding.
+     */
+    public String getSkin() {
+        return this.skin;
     }
 
     /**
