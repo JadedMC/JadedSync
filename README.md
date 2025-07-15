@@ -2,15 +2,14 @@
     <img src="https://www.jadedmc.net/plugins/JadedSync/images/banner.png" />
 </div>
 
-<h1>JadedSync</h1>
-<hr/>
+# JadedSync
 
 <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" /> <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" />
 
 
 JadedSync is an upcoming data syncing plugin for Paper/Velocity servers. It is designed for developers and networks looking to easily scale their plugins across multiple servers and proxies through the use of Redis. It comes with an API for other plugins to take advantage of in order to easily communicate across servers.
 
-<h2>Maven</h2>
+## Maven
 ```xml
 <repositories>
 		<repository>
