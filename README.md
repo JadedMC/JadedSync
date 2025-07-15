@@ -18,8 +18,8 @@ JadedSync is an upcoming data syncing plugin for Paper/Velocity servers. It is d
 ```
 ```xml
 <dependency>
-    <groupId>com.github.JadedMC</groupId>
-    <artifactId>JadedSync</artifactId>
-    <version>-{VERSION}</version>
+    <groupId>com.github.JadedMC.JadedSync</groupId>
+    <artifactId>bukkit</artifactId>
+    <version>{VERSION}</version>
 </dependency>
 ```
