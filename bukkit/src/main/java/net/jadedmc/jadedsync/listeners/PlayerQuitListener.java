@@ -25,6 +25,7 @@
 package net.jadedmc.jadedsync.listeners;
 
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
+import net.jadedmc.jadedsync.api.server.InstanceStatus;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -40,5 +41,9 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onQuit(@NotNull final PlayerQuitEvent event) {
         plugin.getJadedSyncPlayerManager().removePlayer(event.getPlayer().getUniqueId());
+
+        if(plugin.getInstanceMonitor().getCurrentInstance().getStatus() == InstanceStatus.FULL) {
+            plugin.getInstanceMonitor().getCurrentInstance().setStatus(InstanceStatus.ONLINE);
+        }
     }
 }
