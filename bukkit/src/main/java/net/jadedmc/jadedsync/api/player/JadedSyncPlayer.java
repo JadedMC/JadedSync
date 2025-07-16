@@ -45,7 +45,7 @@ public class JadedSyncPlayer {
     private final String name;
     private String skin = "";
     private final Map<String, String> integrations = new HashMap<>();
-    private long lastSynced = -1;
+    private final long joinedTime;
 
     /**
      * Creates a JadedSyncPlayer from a Bukkit Player object.
@@ -57,6 +57,7 @@ public class JadedSyncPlayer {
         this.plugin = plugin;
         this.uuid = player.getUniqueId();
         this.name = player.getName();
+        this.joinedTime = System.currentTimeMillis();
 
         for(final ProfileProperty property : player.getPlayerProfile().getProperties()) {
             if(!property.getName().equals("textures")) {
@@ -83,6 +84,7 @@ public class JadedSyncPlayer {
         this.uuid = UUID.fromString(document.getString("uuid"));
         this.name = document.getString("name");
         this.skin = document.getString("skin");
+        this.joinedTime = document.getLong("joinedTime");
 
         final Document integrationsDocument = document.get("integrations", Document.class);
         for(final String integration : integrations.keySet()) {
@@ -112,6 +114,14 @@ public class JadedSyncPlayer {
     }
 
     /**
+     * Get the time (in ms since epoch) that the player joined the network.
+     * @return Time the player joined.
+     */
+    public long getJoinedTime() {
+        return this.joinedTime;
+    }
+
+    /**
      * Get the player's username.
      * @return Username of the player.
      */
@@ -131,8 +141,6 @@ public class JadedSyncPlayer {
      * Syncs the player's data to Redis.
      */
     public void syncData() {
-        lastSynced = System.currentTimeMillis();
-
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getRedis().set("jadedsync:players:" + this.uuid.toString(), this.toJson());
         });
@@ -146,7 +154,8 @@ public class JadedSyncPlayer {
         final Document document = new Document()
                 .append("uuid", this.uuid.toString())
                 .append("name", this.name)
-                .append("skin", this.skin);
+                .append("skin", this.skin)
+                .append("joinedTime", this.joinedTime);
 
         final Document integrationsDocument = new Document();
 
