@@ -25,6 +25,7 @@
 package net.jadedmc.jadedsync.api.integration;
 
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
+import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -52,9 +53,16 @@ public abstract class Integration {
     /**
      * Updates the data being stored by the JadedSyncPlayer.
      * @param player Player to update the data of.
-     * @return Updated ddta in JSON.
+     * @return Updated data in JSON.
      */
     public abstract String getPlayerIntegration(@NotNull final JadedSyncPlayer player);
+
+    /**
+     * Updates the data being stored by the ServerInstance.
+     * @param serverInstance Server to update the data of.
+     * @return Updated data in JSON.
+     */
+    public abstract String getServerIntegration(@NotNull final CurrentInstance serverInstance);
 
     /**
      * Runs when a player joins the server.

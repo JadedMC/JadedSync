@@ -26,6 +26,7 @@ package net.jadedmc.jadedsync.config.hooks;
 
 import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
+import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import net.luckperms.api.LuckPermsProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,5 +39,10 @@ public class LuckPermsIntegration extends Integration {
     @Override
     public String getPlayerIntegration(@NotNull final JadedSyncPlayer player) {
         return "{\"rank\": \"" + LuckPermsProvider.get().getUserManager().getUser(player.getUniqueId()).getPrimaryGroup() + "\"}";
+    }
+
+    @Override
+    public String getServerIntegration(@NotNull final CurrentInstance currentInstance) {
+        return "";
     }
 }

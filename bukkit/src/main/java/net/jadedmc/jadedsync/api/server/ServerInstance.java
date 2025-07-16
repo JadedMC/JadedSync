@@ -27,9 +27,7 @@ package net.jadedmc.jadedsync.api.server;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Stores information from a server instance, as obtained through Redis.
@@ -46,6 +44,7 @@ public class ServerInstance {
     private final int port;
     private final long startTime;
     private final List<UUID> players = new ArrayList<>();
+    private final Map<String, String> integrations = new HashMap<>();
 
     /**
      * Creates an instance with a given BSON document.
@@ -79,6 +78,12 @@ public class ServerInstance {
         for(final String uuid : document.getList("players", String.class)) {
             players.add(UUID.fromString(uuid));
         }
+
+        // Load integrations.
+        final Document integrationsDocument = document.get("integrations", Document.class);
+        for(final String integration : integrations.keySet()) {
+            this.integrations.put(integration, integrationsDocument.get(integration, Document.class).toJson());
+        }
     }
 
     /**
@@ -104,6 +109,27 @@ public class ServerInstance {
      */
     public int getCapacity() {
         return capacity;
+    }
+
+    /**
+     * Deletes saved data from a specific integration.
+     * @param integration ID of the integration to delete.
+     */
+    public void deleteIntegration(@NotNull final String integration) {
+        this.integrations.remove(integration);
+    }
+
+    /**
+     * Gets the Json data being cached by a given integration.
+     * @param integration Integration to get the data of.
+     * @return Json data.
+     */
+    public String getIntegration(@NotNull final String integration) {
+        if(this.integrations.containsKey(integration)) {
+            return this.integrations.get(integration);
+        }
+
+        return "";
     }
 
     /**

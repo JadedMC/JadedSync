@@ -25,6 +25,7 @@
 package net.jadedmc.jadedsync.api.server;
 
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
+import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,7 +36,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Stores information from the current server instance, as obtained through Redis.
@@ -49,6 +52,7 @@ public class CurrentInstance {
     private final int minorVersion;
     private String address;
     private final int port;
+    private final Map<String, String> integrations = new HashMap<>();
 
     /**
      * Creates the CurrentInstance object.
@@ -74,6 +78,8 @@ public class CurrentInstance {
         }
 
         this.port = plugin.getServer().getPort();
+
+        this.updateIntegrations();
     }
 
     /**
@@ -90,6 +96,27 @@ public class CurrentInstance {
      */
     public int getCapacity() {
         return this.plugin.getServer().getMaxPlayers();
+    }
+
+    /**
+     * Deletes saved data from a specific integration.
+     * @param integration ID of the integration to delete.
+     */
+    public void deleteIntegration(@NotNull final String integration) {
+        this.integrations.remove(integration);
+    }
+
+    /**
+     * Gets the Json data being cached by a given integration.
+     * @param integration Integration to get the data of.
+     * @return Json data.
+     */
+    public String getIntegration(@NotNull final String integration) {
+        if(this.integrations.containsKey(integration)) {
+            return this.integrations.get(integration);
+        }
+
+        return "";
     }
 
     /**
@@ -189,6 +216,26 @@ public class CurrentInstance {
         }
         document.append("players", players);
 
+        // Update integrations
+        this.updateIntegrations();
+
+
+        // Store integrations.
+        final Document integrationsDocument = new Document();
+        // Get data saved from the integration.
+        for(final String integration : this.integrations.keySet()) {
+            final String json = this.integrations.get(integration);
+
+            // Skip integrations that are empty.
+            if(json == null || json.isEmpty()) {
+                continue;
+            }
+
+            final Document integrationDocument = Document.parse(json);
+            integrationsDocument.append(integration, integrationDocument);
+        }
+        document.append("integrations", integrationsDocument);
+
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getRedis().set("jadedsync:servers:backend:" + this.name, document.toJson());
         });
@@ -206,5 +253,26 @@ public class CurrentInstance {
         }
 
         this.status = status;
+    }
+
+    /**
+     * Updates the cached data for a specific integration.
+     * @param integration ID of the integration to update.
+     */
+    public void updateIntegration(@NotNull final String integration) {
+        // Makes sure the integration exists before trying to update it.
+        if(!JadedSyncAPI.hasIntegration(integration)) {
+            return;
+        }
+
+        // Updates the data saved by the integration.
+        this.integrations.put(integration, plugin.getIntegrationManager().getIntegration(integration).getServerIntegration(this));
+    }
+
+    /**
+     * Updates the cached data for all integrations.
+     */
+    public void updateIntegrations() {
+        plugin.getIntegrationManager().getIntegrations().forEach(integration -> this.integrations.put(integration.getId(), integration.getServerIntegration(this)));
     }
 }
