@@ -27,6 +27,10 @@ package net.jadedmc.jadedsync.api.server;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Stores information from a server instance, as obtained through Redis.
  */
@@ -41,6 +45,7 @@ public class ServerInstance {
     private final String address;
     private final int port;
     private final long startTime;
+    private final List<UUID> players = new ArrayList<>();
 
     /**
      * Creates an instance with a given BSON document.
@@ -68,6 +73,11 @@ public class ServerInstance {
         else {
             // Otherwise, read the status from the document.
             this.status = InstanceStatus.valueOf(document.getString("status"));
+        }
+
+        // Load online players.
+        for(final String uuid : document.getList("players", String.class)) {
+            players.add(UUID.fromString(uuid));
         }
     }
 
@@ -126,6 +136,14 @@ public class ServerInstance {
      */
     public int getOpenSlots() {
         return getCapacity() - getOnline();
+    }
+
+    /**
+     * Get a list of all players online on the instance.
+     * @return Players on the instance.
+     */
+    public List<UUID> getPlayers() {
+        return this.players;
     }
 
     /**

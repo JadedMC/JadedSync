@@ -27,12 +27,15 @@ package net.jadedmc.jadedsync.api.server;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stores information from the current server instance, as obtained through Redis.
@@ -178,6 +181,13 @@ public class CurrentInstance {
                 .append("startTime", getStartTime())
                 .append("majorVersion", majorVersion)
                 .append("minorVersion", minorVersion);
+
+        // Add all online players to the document.
+        final List<String> players = new ArrayList<>();
+        for(final Player player : plugin.getServer().getOnlinePlayers()) {
+            players.add(player.getUniqueId().toString());
+        }
+        document.append("players", players);
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getRedis().set("jadedsync:servers:backend:" + this.name, document.toJson());
