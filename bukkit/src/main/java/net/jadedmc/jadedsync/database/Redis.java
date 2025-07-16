@@ -26,6 +26,7 @@ package net.jadedmc.jadedsync.database;
 
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.integration.Integration;
+import net.jadedmc.jadedsync.api.server.InstanceStatus;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -115,6 +116,24 @@ public class Redis {
                         @Override
                         public void onMessage(String channel, String msg) {
                             String[] args = msg.split(" ", 3);
+
+                            switch(args[0]) {
+                                case "instance" -> {
+                                    switch (args[1]) {
+                                        case "close" -> {
+                                            plugin.getInstanceMonitor().getCurrentInstance().setStatus(InstanceStatus.CLOSED);
+                                            return;
+                                        }
+
+                                        case "open" -> {
+                                            plugin.getInstanceMonitor().getCurrentInstance().setStatus(InstanceStatus.ONLINE);
+                                            return;
+                                        }
+                                    }
+
+                                    return;
+                                }
+                            }
 
                             if(args.length < 3) {
                                 return;

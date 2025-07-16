@@ -56,6 +56,14 @@ public class InstanceMonitor {
     }
 
     /**
+     * Mark an instance as closed.
+     * @param instance Instance to close.
+     */
+    public void closeInstance(@NotNull final ServerInstance instance) {
+        plugin.getRedis().publishAsync("jadedsync", "instance close " + instance.getName());
+    }
+
+    /**
      * Gets the Instance the server is using.
      * @return Server instance.
      */
@@ -69,9 +77,11 @@ public class InstanceMonitor {
      * @return Instance with that name.
      */
     public ServerInstance getInstance(@NotNull final String name) {
-        try(Jedis jedis = plugin.getRedis().jedisPool().getResource()) {
-            return new ServerInstance(jedis.get("jadedsync:servers:backend:" + name));
+        if(!plugin.getRedis().exists("jadedsync:servers:backend:" + name)) {
+            return null;
         }
+
+        return new ServerInstance(plugin.getRedis().get("jadedsync:servers:backend:" + name));
     }
 
     /**
@@ -109,5 +119,13 @@ public class InstanceMonitor {
      */
     public CompletableFuture<Collection<ServerInstance>> getInstancesAsync() {
         return CompletableFuture.supplyAsync(this::getInstances);
+    }
+
+    /**
+     * Mark an instance as closed.
+     * @param instance Instance to close.
+     */
+    public void openInstance(@NotNull final ServerInstance instance) {
+        plugin.getRedis().publishAsync("jadedsync", "instance open " + instance.getName());
     }
 }
