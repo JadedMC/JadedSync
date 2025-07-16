@@ -28,6 +28,7 @@ import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import net.jadedmc.jadedsync.api.integration.IntegrationManager;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayerManager;
 import net.jadedmc.jadedsync.api.server.InstanceMonitor;
+import net.jadedmc.jadedsync.commands.AbstractCommand;
 import net.jadedmc.jadedsync.config.ConfigManager;
 import net.jadedmc.jadedsync.config.HookManager;
 import net.jadedmc.jadedsync.database.Redis;
@@ -58,6 +59,8 @@ public final class JadedSyncBukkitPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
+
+        AbstractCommand.registerCommands(this);
     }
 
     @Override

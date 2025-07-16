@@ -153,6 +153,14 @@ public class ServerInstance {
     }
 
     /**
+     * Get how long (in ms) the server has been up for.
+     * @return Server uptime in milliseconds.
+     */
+    public long getUptime() {
+        return System.currentTimeMillis() - this.startTime;
+    }
+
+    /**
      * Get the full version the server is running, as a String.
      * @return String form of the server version.
      */

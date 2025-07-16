@@ -4,3 +4,9 @@ main: net.jadedmc.jadedsync.JadedSyncBukkitPlugin
 api-version: '1.21'
 authors: [ JadedMC ]
 website: https://www.jadedmc.net
+
+commands:
+  instance:
+    description: View and control Server instances.
+    usage: /<command>
+    permission: jadedsync.admin
