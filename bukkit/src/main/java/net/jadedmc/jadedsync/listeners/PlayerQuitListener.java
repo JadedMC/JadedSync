@@ -40,10 +40,18 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler
     public void onQuit(@NotNull final PlayerQuitEvent event) {
+        // Remove the player from the local cache.
         plugin.getJadedSyncPlayerManager().removePlayer(event.getPlayer().getUniqueId());
 
+        // If the server is full and someone leaves, it is no longer full.
         if(plugin.getInstanceMonitor().getCurrentInstance().getStatus() == InstanceStatus.FULL) {
             plugin.getInstanceMonitor().getCurrentInstance().setStatus(InstanceStatus.ONLINE);
+        }
+
+        // Shut down the server if it is closed and empty.
+        if(plugin.getServer().getOnlinePlayers().size() == 1 && plugin.getInstanceMonitor().getCurrentInstance().getStatus() == InstanceStatus.CLOSED) {
+            System.out.println("Empty Server Detected. Waiting 15 seconds before shutdown.");
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> plugin.getServer().shutdown(),15*20);
         }
     }
 }
