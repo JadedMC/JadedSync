@@ -47,6 +47,12 @@ public class Redis {
     public Redis(@NotNull final JadedSyncBukkitPlugin plugin) {
         this.plugin = plugin;
 
+        // Exit if Redis is not set up.
+        if(!this.isSet()) {
+            jedisPool = null;
+            return;
+        }
+
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(Integer.MAX_VALUE);
 
@@ -58,6 +64,10 @@ public class Redis {
         jedisPool = new JedisPool(jedisPoolConfig, host, port, username, password);
 
         subscribe();
+    }
+
+    public boolean isSet() {
+        return plugin.getConfigManager().getConfig().getBoolean("Redis.set");
     }
 
     public JedisPool jedisPool() {

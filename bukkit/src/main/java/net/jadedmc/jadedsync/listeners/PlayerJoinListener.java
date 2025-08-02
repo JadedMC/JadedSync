@@ -28,6 +28,7 @@ import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
 import net.jadedmc.jadedsync.api.server.InstanceStatus;
+import net.jadedmc.jadedsync.utils.chat.ChatUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,6 +45,16 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoin(@NotNull final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+
+        // Exit if Redis is not set up.
+        if(!plugin.getRedis().isSet()) {
+
+            if(player.hasPermission("jadedsync.admin")) {
+                ChatUtils.chat(player, "<secondary>JadedSync has not been properly configured! Make sure Redis is enabled in the config.yml.");
+            }
+
+            return;
+        }
 
         // Mark the server as full if it reaches capacity.
         if(plugin.getServer().getOnlinePlayers().size() == plugin.getServer().getMaxPlayers()) {
