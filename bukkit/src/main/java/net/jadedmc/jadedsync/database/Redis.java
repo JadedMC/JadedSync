@@ -133,21 +133,17 @@ public class Redis {
 
                                     return;
                                 }
+
+                                case "integration" -> {
+                                    final Integration integration = plugin.getIntegrationManager().getIntegration(args[1]);
+
+                                    if(integration == null) {
+                                        return;
+                                    }
+
+                                    integration.onMessageReceive(args[2]);
+                                }
                             }
-
-                            if(args.length < 3) {
-                                return;
-                            }
-
-                            String integrationID = args[1];
-
-                            Integration integration = plugin.getIntegrationManager().getIntegration(integrationID);
-
-                            if(integration == null) {
-                                return;
-                            }
-
-                            //integration.onRedisMessage(args[2]);
                         }
                     }, "jadedsync");
                 }

@@ -24,6 +24,7 @@
  */
 package net.jadedmc.jadedsync.api.integration;
 
+import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
 import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import org.jetbrains.annotations.NotNull;
@@ -65,8 +66,22 @@ public abstract class Integration {
     public abstract String getServerIntegration(@NotNull final CurrentInstance serverInstance);
 
     /**
+     * Called when the integration receives a message from Redis pub/sub.
+     * @param message Message being received.
+     */
+    public void onMessageReceive(@NotNull final String message) {}
+
+    /**
      * Runs when a player joins the server.
      * @param player JadedSyncPlayer of the player who joined.
      */
     public void onPlayerJoin(@NotNull final JadedSyncPlayer player) {}
+
+    /**
+     * Publishes a message through Redis pub/sub.
+     * @param message Message to be published.
+     */
+    public final void publish(@NotNull final String message) {
+        JadedSyncAPI.getRedis().publish("jadedsync", "integration " + this.id + " " + message);
+    }
 }
