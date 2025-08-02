@@ -27,9 +27,12 @@ package net.jadedmc.jadedsync.api;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
+import net.jadedmc.jadedsync.database.Redis;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,6 +53,14 @@ public class JadedSyncAPI {
 
     public static Collection<Integration> getIntegrations() {
         return plugin.getIntegrationManager().getIntegrations();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static Redis getRedis() {
+        return plugin.getRedis();
     }
 
     public static boolean hasIntegration(@NotNull final String integration) {
@@ -80,6 +91,27 @@ public class JadedSyncAPI {
 
     public static CompletableFuture<JadedSyncPlayer> getPlayerAsync(@NotNull final UUID uuid) {
         return CompletableFuture.supplyAsync(() -> getPlayer(uuid));
+    }
+
+    public static List<JadedSyncPlayer> getPlayers(@NotNull final Collection<UUID> uuids) {
+        final List<JadedSyncPlayer> players = new ArrayList<>();
+
+        for(final UUID uuid : uuids) {
+            final JadedSyncPlayer player = getPlayer(uuid);
+
+            // Skip the player if they do not exist.
+            if(player == null) {
+                continue;
+            }
+
+            players.add(player);
+        }
+
+        return players;
+    }
+
+    public static CompletableFuture<List<JadedSyncPlayer>> getPlayersAsync(@NotNull final Collection<UUID> uuids) {
+        return CompletableFuture.supplyAsync(() -> getPlayers(uuids));
     }
 
     /**
