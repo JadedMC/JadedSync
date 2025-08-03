@@ -172,17 +172,6 @@ public class ItemBuilder {
     }
 
     /**
-     * Set the cooldown of an item.
-     * @param seconds Seconds of cooldown for the item.
-     * @return ItemBuilder.
-     */
-    public ItemBuilder setCooldown(final float seconds) {
-        this.itemMeta.getUseCooldown().setCooldownSeconds(seconds);
-
-        return this;
-    }
-
-    /**
      * Change the CustomModelData of the item.
      * @param customModelData New CustomModelData.
      * @return ItemBuilder.
