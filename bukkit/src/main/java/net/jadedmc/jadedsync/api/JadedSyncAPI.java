@@ -27,13 +27,13 @@ package net.jadedmc.jadedsync.api;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
+import net.jadedmc.jadedsync.api.player.JadedSyncPlayerMap;
 import net.jadedmc.jadedsync.database.Redis;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class JadedSyncAPI {
@@ -89,8 +89,17 @@ public class JadedSyncAPI {
         return new JadedSyncPlayer(plugin, plugin.getRedis().get("jadedsync:players:" + uuid));
     }
 
+    public static JadedSyncPlayer getPlayer(@NotNull final String username) {
+        final JadedSyncPlayerMap players = getPlayers();
+        return players.get(username);
+    }
+
     public static CompletableFuture<JadedSyncPlayer> getPlayerAsync(@NotNull final UUID uuid) {
         return CompletableFuture.supplyAsync(() -> getPlayer(uuid));
+    }
+
+    public static CompletableFuture<JadedSyncPlayer> getPlayerAsync(@NotNull final String username) {
+        return CompletableFuture.supplyAsync(() -> getPlayer(username));
     }
 
     public static List<JadedSyncPlayer> getPlayers(@NotNull final Collection<UUID> uuids) {
@@ -110,8 +119,28 @@ public class JadedSyncAPI {
         return players;
     }
 
+    public static JadedSyncPlayerMap getPlayers() {
+        final JadedSyncPlayerMap players = new JadedSyncPlayerMap();
+
+        try(Jedis jedis = plugin.getRedis().jedisPool().getResource()) {
+            final Set<String> keys = jedis.keys("jadedsync:players:*");
+
+            for(@NotNull final String key : keys) {
+                final String json = jedis.get(key);
+                final JadedSyncPlayer player = new JadedSyncPlayer(plugin, json);
+                players.put(player.getUniqueId(), player);
+            }
+        }
+
+        return players;
+    }
+
     public static CompletableFuture<List<JadedSyncPlayer>> getPlayersAsync(@NotNull final Collection<UUID> uuids) {
         return CompletableFuture.supplyAsync(() -> getPlayers(uuids));
+    }
+
+    public static CompletableFuture<JadedSyncPlayerMap> getPlayersAsync() {
+        return CompletableFuture.supplyAsync(JadedSyncAPI::getPlayers);
     }
 
     /**
