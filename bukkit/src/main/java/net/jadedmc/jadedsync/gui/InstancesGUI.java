@@ -47,9 +47,18 @@ public class InstancesGUI extends CustomGUI {
         super(54, "Instances");
 
         plugin.getInstanceMonitor().getInstancesAsync().whenComplete((instances,exception) -> {
+            // Sort instances by name.
+            final TreeMap<String, ServerInstance> sortedInstances = new TreeMap<>();
+            for(final ServerInstance instance : instances) {
+                sortedInstances.put(instance.getName(), instance);
+            }
+
             plugin.getServer().getScheduler().runTask(plugin, () -> {
                 int slot = 0;
-                for(final ServerInstance instance : instances) {
+                for(final String name : sortedInstances.keySet()) {
+                    final ServerInstance instance = sortedInstances.get(name);
+
+                    // Exit if no more room.
                     if(slot > 53) {
                         break;
                     }
