@@ -31,7 +31,6 @@ import net.jadedmc.jadedsync.api.server.ServerInstance;
 import net.jadedmc.jadedsync.utils.gui.CustomGUI;
 import net.jadedmc.jadedsync.utils.item.ItemBuilder;
 import net.jadedmc.jadedsync.utils.item.SkullBuilder;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,16 +43,11 @@ public class InstancePlayersGUI extends CustomGUI {
         super(54, instance.getName() + " - Players");
         addFiller(0,1,2,3,5,6,7,8);
 
-        final ItemBuilder instanceItem = new ItemBuilder(Material.GREEN_TERRACOTTA)
+        final ItemBuilder instanceItem = new ItemBuilder(instance.getStatus().getIconMaterial())
                 .setDisplayName(instance.getStatus().getColor() + instance.getName())
                 .addLore("<primary>Players: <white>" + instance.getOnline() + "<secondary>/<white>" + instance.getCapacity())
                 .addLore("")
                 .addLore(instance.getStatus().getDisplayName());
-        switch(instance.getStatus()) {
-            case FULL,CLOSED -> instanceItem.setMaterial(Material.RED_TERRACOTTA);
-            case MAINTENANCE -> instanceItem.setMaterial(Material.PURPLE_TERRACOTTA);
-            case UNRESPONSIVE -> instanceItem.setMaterial(Material.BLACK_TERRACOTTA);
-        }
         setItem(4, instanceItem.build());
 
         JadedSyncAPI.getPlayersAsync(instance.getPlayers()).whenComplete((players, exception) -> {
