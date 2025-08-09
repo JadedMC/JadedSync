@@ -25,11 +25,14 @@
 package net.jadedmc.jadedsync.gui;
 
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
+import net.jadedmc.jadedsync.api.server.InstanceStatus;
 import net.jadedmc.jadedsync.api.server.ServerInstance;
 import net.jadedmc.jadedsync.utils.gui.CustomGUI;
 import net.jadedmc.jadedsync.utils.item.ItemBuilder;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.TreeMap;
 
 /**
  * Opens a GUI displaying all
@@ -56,10 +59,18 @@ public class InstancesGUI extends CustomGUI {
                             .setDisplayName(instance.getStatus().getColor() + instance.getName())
                             .addLore("<gray>Version: " + instance.getStatus().getColor() + instance.getVersion())
                             .addLore("<gray>Online: " + instance.getStatus().getColor() + instance.getOnline() + "<gray>/" + instance.getStatus().getColor() + instance.getCapacity())
-                            .addLore("<gray>Address: " + instance.getStatus().getColor() + instance.getAddress() + ":"  + instance.getPort())
-                            .addLore("<gray>Uptime: " + instance.getStatus().getColor() + DurationFormatUtils.formatDurationWords(instance.getUptime(), true, true))
-                            .addLore("")
-                            .addLore(instance.getStatus().getDisplayName());
+                            .addLore("<gray>Address: " + instance.getStatus().getColor() + instance.getAddress() + ":"  + instance.getPort());
+
+                    // Show Uptime or Time since last heartbeat, depending on if the server has responded.
+                    if(instance.getStatus() == InstanceStatus.UNRESPONSIVE) {
+                        builder.addLore("<gray>Last Heartbeat: " + instance.getStatus().getColor() + DurationFormatUtils.formatDurationWords(instance.getLastHeartbeat(), true, true) + " ago");
+                    }
+                    else {
+                        builder.addLore("<gray>Uptime: " + instance.getStatus().getColor() + DurationFormatUtils.formatDurationWords(instance.getUptime(), true, true));
+                    }
+
+
+                    builder.addLore("").addLore(instance.getStatus().getDisplayName());
                     setItem(slot, builder.build());
 
                     slot++;
