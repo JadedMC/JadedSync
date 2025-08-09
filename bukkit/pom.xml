@@ -60,6 +60,10 @@
                             <pattern>redis.clients.jedis</pattern>
                             <shadedPattern>net.jadedmc.jadedsync.libraries.jedis</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>net.jadedmc.jadedsync.listeners.bstats</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
             </plugin>
@@ -104,6 +108,14 @@
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
             <version>5.5.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- bStats -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
 

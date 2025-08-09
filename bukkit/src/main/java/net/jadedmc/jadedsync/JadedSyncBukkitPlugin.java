@@ -35,6 +35,7 @@ import net.jadedmc.jadedsync.database.Redis;
 import net.jadedmc.jadedsync.listeners.PlayerJoinListener;
 import net.jadedmc.jadedsync.listeners.PlayerQuitListener;
 import net.jadedmc.jadedsync.utils.gui.GUIListeners;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class JadedSyncBukkitPlugin extends JavaPlugin {
@@ -63,6 +64,9 @@ public final class JadedSyncBukkitPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GUIListeners(), this);
 
         AbstractCommand.registerCommands(this);
+
+        // Enable bStats.
+        new Metrics(this, 26849);
     }
 
     @Override
