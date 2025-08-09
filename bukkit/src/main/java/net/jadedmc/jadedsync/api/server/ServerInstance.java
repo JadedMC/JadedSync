@@ -45,6 +45,7 @@ public class ServerInstance {
     private final long startTime;
     private final List<UUID> players = new ArrayList<>();
     private final Map<String, String> integrations = new HashMap<>();
+    private final Collection<String> tags;
 
     /**
      * Creates an instance with a given BSON document.
@@ -60,6 +61,7 @@ public class ServerInstance {
         this.port = document.getInteger("port");
         this.lastHeartbeat = document.getLong("heartbeat");
         this.startTime = document.getLong("startTime");
+        this.tags = document.getList("tags", String.class);
 
         if((System.currentTimeMillis() - lastHeartbeat > 90000)) {
             // If the server has not responded in 90 seconds, mark it as unresponsive.
@@ -197,6 +199,14 @@ public class ServerInstance {
     }
 
     /**
+     * Gets all tags for the instance.
+     * @return Instance tags.
+     */
+    public Collection<String> getTags() {
+        return this.tags;
+    }
+
+    /**
      * Get how long (in ms) the server has been up for.
      * @return Server uptime in milliseconds.
      */
@@ -210,5 +220,14 @@ public class ServerInstance {
      */
     public String getVersion() {
         return "1." + majorVersion + "." + minorVersion;
+    }
+
+    /**
+     * Check if the instance has a given tag.
+     * @param tag Tag to check.
+     * @return Whether the instance has that tag.
+     */
+    public boolean hasTag(@NotNull final String tag) {
+        return this.tags.contains(tag);
     }
 }

@@ -28,9 +28,7 @@ import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -61,6 +59,58 @@ public class InstanceMonitor {
      */
     public void closeInstance(@NotNull final ServerInstance instance) {
         plugin.getRedis().publishAsync("jadedsync", "instance close " + instance.getName());
+    }
+
+    /**
+     * Get all instances that contain a specific tag.
+     * <p><b>Warning: This is done on the thread this is called from. Should be used asynchronously.</b></p>
+     * @param tag Tag to get instances of.
+     * @return All instances with that tag.
+     */
+    public Collection<ServerInstance> fromTag(@NotNull final String tag) {
+        return fromTags(Collections.singletonList(tag));
+    }
+
+    /**
+     * Get all instances that contain a specific tag.
+     * @param tag Tag to get instances of.
+     * @return All instances with that tag.
+     */
+    public CompletableFuture<Collection<ServerInstance>> fromTagAsync(@NotNull final String tag) {
+        return CompletableFuture.supplyAsync(() -> fromTag(tag));
+    }
+
+    /**
+     * Get all instances that contain a collection of tags.
+     * <p><b>Warning: This is done on the thread this is called from. Should be used asynchronously.</b></p>
+     * @param tags Tags to get instances of.
+     * @return All instances with those tags.
+     */
+    public Collection<ServerInstance> fromTags(@NotNull final Collection<String> tags) {
+        final Collection<ServerInstance> instances = new HashSet<>();
+
+        // Loop through all online instances.
+        for(final ServerInstance instance : getInstances()) {
+            // As well as all provided tags.
+            for(final String tag : tags) {
+                // Add the instance if it contains one of those tags.
+                if(instance.hasTag(tag)) {
+                    instances.add(instance);
+                    break;
+                }
+            }
+        }
+
+        return instances;
+    }
+
+    /**
+     * Get all instances that contain a collection of tags.
+     * @param tags Tags to get instances of.
+     * @return All instances with those tags.
+     */
+    public CompletableFuture<Collection<ServerInstance>> fromTagsAsync(@NotNull final Collection<String> tags) {
+        return CompletableFuture.supplyAsync(() -> fromTags(tags));
     }
 
     /**

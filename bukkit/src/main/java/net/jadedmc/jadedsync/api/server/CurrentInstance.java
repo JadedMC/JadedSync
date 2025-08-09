@@ -35,10 +35,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Stores information from the current server instance, as obtained through Redis.
@@ -53,6 +50,7 @@ public class CurrentInstance {
     private String address;
     private final int port;
     private final Map<String, String> integrations = new HashMap<>();
+    private final Collection<String> tags = new ArrayList<>();
 
     /**
      * Creates the CurrentInstance object.
@@ -79,7 +77,20 @@ public class CurrentInstance {
 
         this.port = plugin.getServer().getPort();
 
+        // Load tags.
+        if(plugin.getConfigManager().getConfig().contains("Server.tags")) {
+            this.tags.addAll(plugin.getConfigManager().getConfig().getStringList("Server.tags"));
+        }
+
         this.updateIntegrations();
+    }
+
+    /**
+     * Add a tag to the Instance.
+     * @param tag Tag to add.
+     */
+    public void addTag(@NotNull final String tag) {
+        this.tags.add(tag);
     }
 
     /**
@@ -186,11 +197,28 @@ public class CurrentInstance {
     }
 
     /**
+     * Gets all tags for the instance.
+     * @return Instance tags.
+     */
+    public Collection<String> getTags() {
+        return this.tags;
+    }
+
+    /**
      * Get how long (in ms) the server has been up for.
      * @return Server uptime in milliseconds.
      */
     public long getUptime() {
         return System.currentTimeMillis() - this.startTime;
+    }
+
+    /**
+     * Check if the instance has a given tag.
+     * @param tag Tag to check.
+     * @return Whether the instance has that tag.
+     */
+    public boolean hasTag(@NotNull final String tag) {
+        return this.tags.contains(tag);
     }
 
     /**
@@ -206,8 +234,9 @@ public class CurrentInstance {
                 .append("address", getAddress())
                 .append("port", getPort())
                 .append("startTime", getStartTime())
-                .append("majorVersion", majorVersion)
-                .append("minorVersion", minorVersion);
+                .append("majorVersion", this.majorVersion)
+                .append("minorVersion", this.minorVersion)
+                .append("tags", this.tags);
 
         // Add all online players to the document.
         final List<String> players = new ArrayList<>();
@@ -239,6 +268,14 @@ public class CurrentInstance {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getRedis().set("jadedsync:servers:backend:" + this.name, document.toJson());
         });
+    }
+
+    /**
+     * Remove a tag from the Instance.
+     * @param tag Tag to remove.
+     */
+    public void removeTag(@NotNull final String tag) {
+        this.tags.remove(tag);
     }
 
     /**
