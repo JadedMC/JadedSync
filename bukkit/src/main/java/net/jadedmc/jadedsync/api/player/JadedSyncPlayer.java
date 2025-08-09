@@ -46,6 +46,7 @@ public class JadedSyncPlayer {
     private String skin = "";
     private final Map<String, String> integrations = new HashMap<>();
     private final long joinedTime;
+    private final String server;
 
     /**
      * Creates a JadedSyncPlayer from a Bukkit Player object.
@@ -67,6 +68,8 @@ public class JadedSyncPlayer {
             this.skin = property.getValue();
         }
 
+        this.server = plugin.getInstanceMonitor().getCurrentInstance().getName();
+
         this.updateIntegrations();
     }
 
@@ -85,6 +88,7 @@ public class JadedSyncPlayer {
         this.name = document.getString("name");
         this.skin = document.getString("skin");
         this.joinedTime = document.getLong("joinedTime");
+        this.server = document.getString("server");
 
         final Document integrationsDocument = document.get("integrations", Document.class);
         for(final String integration : integrations.keySet()) {
@@ -155,7 +159,8 @@ public class JadedSyncPlayer {
                 .append("uuid", this.uuid.toString())
                 .append("name", this.name)
                 .append("skin", this.skin)
-                .append("joinedTime", this.joinedTime);
+                .append("joinedTime", this.joinedTime)
+                .append("server", this.server);
 
         final Document integrationsDocument = new Document();
 
@@ -176,6 +181,14 @@ public class JadedSyncPlayer {
 
         // Convert Bson to Json.
         return document.toJson();
+    }
+
+    /**
+     * Get the name of the server the player is currently on.
+     * @return Server name.
+     */
+    public String getServer() {
+        return this.server;
     }
 
     /**
