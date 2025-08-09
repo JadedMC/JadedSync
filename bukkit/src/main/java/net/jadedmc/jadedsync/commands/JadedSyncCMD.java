@@ -24,5 +24,36 @@
  */
 package net.jadedmc.jadedsync.commands;
 
-public class JadedSyncCMD {
+import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
+import net.jadedmc.jadedsync.gui.InstancesGUI;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+public class JadedSyncCMD extends AbstractCommand {
+    private final JadedSyncBukkitPlugin plugin;
+
+    public JadedSyncCMD(@NotNull final JadedSyncBukkitPlugin plugin) {
+        super("jadedsync", "jadedsync.admin", false);
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void execute(@NotNull final CommandSender sender, @NotNull final String[] args) {
+        // If no sub commands are given, display help menu.
+        if(args.length == 0) {
+            // TODO: Help menu.
+            return;
+        }
+
+        // Process sub commands.
+        switch(args[0].toLowerCase()) {
+            case "instances", "servers" -> instancesCMD(sender);
+        }
+    }
+
+    public void instancesCMD(@NotNull final CommandSender sender) {
+        final Player player = (Player) sender;
+        new InstancesGUI(plugin).open(player);
+    }
 }

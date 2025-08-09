@@ -10,3 +10,8 @@ commands:
     description: View and control Server instances.
     usage: /<command>
     permission: jadedsync.admin
+  jadedsync:
+    description: Main JadedSync command.
+    usage: /<command>
+    permission: jadedsync.admin
+    aliases: [ jc ]

@@ -58,7 +58,7 @@ public abstract class AbstractCommand implements CommandExecutor {
     public static void registerCommands(JadedSyncBukkitPlugin pl) {
         plugin = pl;
 
-        //new JadedSyncCMD(pl);
+        new JadedSyncCMD(pl);
         new InstanceCMD(pl);
     }
 
