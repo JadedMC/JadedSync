@@ -74,6 +74,8 @@ public class PlayersGUI extends CustomGUI {
                             .addLore("<gray>Online For: <primary>" + DurationFormatUtils.formatDurationWords(System.currentTimeMillis() - player.getJoinedTime(), true, true))
                             .build();
                     setItem(i, playerHead);
+
+                    i++;
                 }
             });
         });
