@@ -37,6 +37,7 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.jadedmc.jadedsync.database.Redis;
 import net.jadedmc.jadedsync.listeners.DisconnectListener;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -57,11 +58,13 @@ public class JadedSyncVelocityPlugin {
     private YamlDocument config;
     private final Logger logger;
     private final ProxyServer proxyServer;
+    private final Metrics.Factory metricsFactory;
 
     @Inject
-    public JadedSyncVelocityPlugin(final ProxyServer proxyServer, final Logger logger, @DataDirectory Path dataDirectory) {
+    public JadedSyncVelocityPlugin(final ProxyServer proxyServer, final Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
         this.proxyServer = proxyServer;
         this.logger = logger;
+        this.metricsFactory = metricsFactory;
 
         // Load the configuration file.
         try {
@@ -80,12 +83,16 @@ public class JadedSyncVelocityPlugin {
 
         // Connect to redis.
         redis = new Redis(this);
+
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Register events.
         proxyServer.getEventManager().register(this, new DisconnectListener(this));
+
+        // Enable bStats
+        metricsFactory.make(this, 26851);
     }
 
     public YamlDocument getConfig() {
