@@ -72,7 +72,7 @@ public class InstancesGUI extends CustomGUI {
 
                     // Show Uptime or Time since last heartbeat, depending on if the server has responded.
                     if(instance.getStatus() == InstanceStatus.UNRESPONSIVE) {
-                        builder.addLore("<gray>Last Heartbeat: " + instance.getStatus().getColor() + DurationFormatUtils.formatDurationWords(instance.getLastHeartbeat(), true, true) + " ago");
+                        builder.addLore("<gray>Last Heartbeat: " + instance.getStatus().getColor() + DurationFormatUtils.formatDurationWords( - System.currentTimeMillis() - instance.getLastHeartbeat(), true, true) + " ago");
                     }
                     else {
                         builder.addLore("<gray>Uptime: " + instance.getStatus().getColor() + DurationFormatUtils.formatDurationWords(instance.getUptime(), true, true));
