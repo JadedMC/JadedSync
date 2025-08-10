@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.jadedmc</groupId>
         <artifactId>JadedSync</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

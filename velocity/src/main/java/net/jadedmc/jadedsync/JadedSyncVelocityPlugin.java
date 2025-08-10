@@ -49,7 +49,7 @@ import java.util.Objects;
 @Plugin(
         id = "jadedsync",
         name = "JadedSync",
-        version = "1.0",
+        version = "${project.version}",
         url = "https://www.jadedmc.net",
         authors = {"JadedMC"}
 )
