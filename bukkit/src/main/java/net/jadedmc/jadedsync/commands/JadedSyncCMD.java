@@ -26,6 +26,7 @@ package net.jadedmc.jadedsync.commands;
 
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.gui.InstancesGUI;
+import net.jadedmc.jadedsync.gui.PlayersGUI;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +34,20 @@ import org.jetbrains.annotations.NotNull;
 public class JadedSyncCMD extends AbstractCommand {
     private final JadedSyncBukkitPlugin plugin;
 
+    /**
+     * Creates the command.
+     * @param plugin Instance of the plugin.
+     */
     public JadedSyncCMD(@NotNull final JadedSyncBukkitPlugin plugin) {
         super("jadedsync", "jadedsync.admin", false);
         this.plugin = plugin;
     }
 
+    /**
+     * Runs when the command is executed.
+     * @param sender The Command Sender.
+     * @param args Arguments of the command.
+     */
     @Override
     public void execute(@NotNull final CommandSender sender, @NotNull final String[] args) {
         // If no sub commands are given, display help menu.
@@ -49,11 +59,25 @@ public class JadedSyncCMD extends AbstractCommand {
         // Process sub commands.
         switch(args[0].toLowerCase()) {
             case "instances", "servers" -> instancesCMD(sender);
+            case "players", "online" -> playersCMD(sender);
         }
     }
 
+    /**
+     * Opens a GUI showing all available instances.
+     * @param sender Command Sender.
+     */
     public void instancesCMD(@NotNull final CommandSender sender) {
         final Player player = (Player) sender;
         new InstancesGUI(plugin).open(player);
+    }
+
+    /**
+     * Opens a GUI showing all players online in the network.
+     * @param sender Command Sender.
+     */
+    public void playersCMD(@NotNull final CommandSender sender) {
+        final Player player = (Player) sender;
+        new PlayersGUI(plugin).open(player);
     }
 }
