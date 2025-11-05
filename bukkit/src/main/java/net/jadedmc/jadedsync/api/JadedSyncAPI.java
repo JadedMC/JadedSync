@@ -28,8 +28,8 @@ import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayerMap;
+import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import net.jadedmc.jadedsync.database.Redis;
-import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 
@@ -45,6 +45,14 @@ public class JadedSyncAPI {
      */
     public static void initialize(@NotNull final JadedSyncBukkitPlugin pl) {
         plugin = pl;
+    }
+
+    /**
+     * Get the current server instance.
+     * @return Current instance.
+     */
+    public static CurrentInstance getCurrentInstance() {
+        return plugin.getInstanceMonitor().getCurrentInstance();
     }
 
     public static Integration getIntegration(@NotNull final String id) {
