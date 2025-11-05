@@ -5,6 +5,8 @@ api-version: '1.13'
 authors: [ JadedMC ]
 website: https://www.jadedmc.net
 
+softdepend: [CloudNet-Bridge]
+
 commands:
   instance:
     description: View and control Server instances.
