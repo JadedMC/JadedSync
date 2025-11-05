@@ -28,6 +28,7 @@ import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import net.jadedmc.jadedsync.api.server.InstanceStatus;
 import net.jadedmc.jadedsync.api.server.ServerInstance;
+import net.jadedmc.jadedsync.gui.InstanceGUI;
 import net.jadedmc.jadedsync.gui.InstancePlayersGUI;
 import net.jadedmc.jadedsync.utils.chat.ChatUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -57,6 +58,7 @@ public class InstanceCMD extends AbstractCommand {
         // Process sub commands.
         switch(args[0].toLowerCase()) {
             case "close" -> closeCMD(sender, args);
+            case "gui" -> guiCMD(sender, args);
             case "open" -> openCMD(sender, args);
             case "players" -> playersCMD(sender, args);
             case "view" -> viewRemoteInstance(sender, args);
@@ -96,6 +98,44 @@ public class InstanceCMD extends AbstractCommand {
             // Closes the instance.
             plugin.getInstanceMonitor().closeInstance(instance);
             ChatUtils.chat(sender, "<primary><bold>Instance</bold> <dark_gray>» <primary>Instance has been marked as " + InstanceStatus.CLOSED.getDisplayName() + "<primary>.");
+        });
+    }
+
+    /**
+     * Opens the Instance GUI for a given instance.
+     * @param sender Command Sender.
+     * @param args Command arguments.
+     */
+    private void guiCMD(@NotNull final CommandSender sender, final String[] args) {
+        // Make sure the sender is a player.
+        if(!(sender instanceof Player)) {
+            ChatUtils.chat(sender, "<red><bold>Error</bold></red> <dark_gray>»</dark_gray> <red>Only players can use that command!</red>");
+            return;
+        }
+
+        // Get the instance to look at players for based on the command arguments.
+        String instanceName;
+        if(args.length < 2) {
+            instanceName = plugin.getInstanceMonitor().getCurrentInstance().getName();
+        }
+        else {
+            instanceName = args[1];
+        }
+
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Find the instance they are trying to open.
+            final ServerInstance instance = plugin.getInstanceMonitor().getInstance(instanceName);
+
+            // Make sure the instance exists.
+            if(instance == null) {
+                ChatUtils.chat(sender, "<red><bold>Error</bold></red> <dark_gray>»</dark_gray> <red>Could not find an instance with that name!</red>");
+                return;
+            }
+
+            // Display the GUI to the player.
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                new InstanceGUI(plugin, instance, null).open(((Player) sender));
+            });
         });
     }
 

@@ -57,6 +57,10 @@ public class SkullBuilder {
         return this;
     }
 
+    public SkullBuilder fromSkull(final Skull skull) {
+        return fromBase64(skull.getTexture());
+    }
+
     public SkullBuilder fromUUID(@NotNull final UUID uuid) {
         this.item = XSkull.createItem().profile(Profileable.of(uuid)).apply();
         return this;

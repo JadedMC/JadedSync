@@ -80,7 +80,7 @@ public class InstancesGUI extends CustomGUI {
 
 
                     builder.addLore("").addLore(instance.getStatus().getDisplayName());
-                    setItem(slot, builder.build());
+                    setItem(slot, builder.build(), (p,a) -> new InstanceGUI(plugin, instance, this).open(p));
 
                     slot++;
                 }
