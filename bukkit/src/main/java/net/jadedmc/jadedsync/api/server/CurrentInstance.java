@@ -24,6 +24,8 @@
  */
 package net.jadedmc.jadedsync.api.server;
 
+import eu.cloudnetservice.driver.inject.InjectionLayer;
+import eu.cloudnetservice.wrapper.configuration.WrapperConfiguration;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.JadedSyncAPI;
 import org.bson.Document;
@@ -58,7 +60,14 @@ public class CurrentInstance {
      */
     public CurrentInstance(@NotNull final JadedSyncBukkitPlugin plugin) {
         this.plugin = plugin;
-        this.name = plugin.getConfigManager().getConfig().getString("Server.name");
+
+        if(plugin.getServer().getPluginManager().isPluginEnabled("CloudNet-Bridge")) {
+            this.name = InjectionLayer.ext().instance(WrapperConfiguration.class).serviceInfoSnapshot().name();
+        }
+        else {
+            this.name = plugin.getConfigManager().getConfig().getString("Server.name");
+        }
+
         this.startTime = System.currentTimeMillis();
         this.status = InstanceStatus.ONLINE;
 
