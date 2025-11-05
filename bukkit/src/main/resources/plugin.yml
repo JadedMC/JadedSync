@@ -14,4 +14,4 @@ commands:
     description: Main JadedSync command.
     usage: /<command>
     permission: jadedsync.admin
-    aliases: [ jc ]
+    aliases: [ js ]
