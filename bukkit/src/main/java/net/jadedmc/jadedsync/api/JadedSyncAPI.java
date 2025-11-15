@@ -164,4 +164,8 @@ public class JadedSyncAPI {
     public static CompletableFuture<Boolean> hasPlayerAsync(@NotNull final UUID uuid) {
         return CompletableFuture.supplyAsync(() -> hasPlayer(uuid));
     }
+
+    public static void registerIntegration(@NotNull final Integration integration) {
+        plugin.getIntegrationManager().registerIntegration(integration);
+    }
 }
