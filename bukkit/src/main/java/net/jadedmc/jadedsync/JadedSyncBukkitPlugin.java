@@ -65,6 +65,9 @@ public final class JadedSyncBukkitPlugin extends JavaPlugin {
 
         AbstractCommand.registerCommands(this);
 
+        // Allow the plugin to send messages to the proxy.
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
         // Enable bStats.
         new Metrics(this, 26849);
     }
