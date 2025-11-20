@@ -25,6 +25,7 @@
 package net.jadedmc.jadedsync.config;
 
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
+import net.jadedmc.jadedsync.Placeholders;
 import net.jadedmc.jadedsync.config.hooks.LuckPermsIntegration;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,11 @@ public class HookManager {
 
         if(plugin.getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             plugin.getIntegrationManager().registerIntegration(new LuckPermsIntegration());
+        }
+
+        // Register PlaceholderAPI placeholders if installed.
+        if(plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new Placeholders(plugin).register();
         }
     }
 }
