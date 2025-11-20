@@ -83,7 +83,7 @@ public class ServerInstance {
 
         // Load integrations.
         final Document integrationsDocument = document.get("integrations", Document.class);
-        for(final String integration : integrations.keySet()) {
+        for(final String integration : integrationsDocument.keySet()) {
             this.integrations.put(integration, integrationsDocument.get(integration, Document.class).toJson());
         }
     }
