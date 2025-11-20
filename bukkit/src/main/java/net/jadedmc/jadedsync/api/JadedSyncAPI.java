@@ -245,4 +245,76 @@ public class JadedSyncAPI {
 
         sendMessage(builder.substring(0, builder.length() - 1), message);
     }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param uuid UUID of the player to change server of.
+     * @param serverName Name of the server to change to.
+     */
+    public static void sendToServer(@NotNull final String uuid, @NotNull final String serverName) {
+        plugin.getRedis().publishAsync("jadedsync", "connect " + uuid + " " + serverName);
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param uuid UUID of the player to change server of.
+     * @param serverInstance Server to change to.
+     */
+    public static void sendToServer(@NotNull final String uuid, @NotNull final ServerInstance serverInstance) {
+        sendToServer(uuid, serverInstance.getName());
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param uuid UUID of the player to change server of.
+     * @param serverName Name of the server to change to.
+     */
+    public static void sendToServer(@NotNull final UUID uuid, @NotNull final String serverName) {
+        sendToServer(uuid.toString(), serverName);
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param uuid UUID of the player to change server of.
+     * @param serverInstance Server to change to.
+     */
+    public static void sendToServer(@NotNull final UUID uuid, @NotNull final ServerInstance serverInstance) {
+        sendToServer(uuid.toString(), serverInstance);
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param jadedSyncPlayer Player to change server of.
+     * @param serverName Name of the server to change to.
+     */
+    public static void sendToServer(@NotNull final JadedSyncPlayer jadedSyncPlayer, @NotNull final String serverName) {
+        sendToServer(jadedSyncPlayer.getUniqueId(), serverName);
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param jadedSyncPlayer Player to change server of.
+     * @param serverInstance Server to change to.
+     */
+    public static void sendToServer(@NotNull final JadedSyncPlayer jadedSyncPlayer, @NotNull final ServerInstance serverInstance) {
+        sendToServer(jadedSyncPlayer.getUniqueId(), serverInstance);
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param offlinePlayer Player to change server of.
+     * @param serverName Name of the server to change to.
+     */
+    public static void sendToServer(@NotNull final OfflinePlayer offlinePlayer, @NotNull final String serverName) {
+        sendToServer(offlinePlayer.getUniqueId(), serverName);
+    }
+
+    /**
+     * Sends the given player to the given server, from anywhere in the network.
+     * @param offlinePlayer Player to change server of.
+     * @param serverInstance Server to change to.
+     */
+    public static void sendToServer(@NotNull final OfflinePlayer offlinePlayer, @NotNull final ServerInstance serverInstance) {
+        sendToServer(offlinePlayer.getUniqueId(), serverInstance);
+    }
 }

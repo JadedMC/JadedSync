@@ -24,11 +24,15 @@
  */
 package net.jadedmc.jadedsync.database;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.server.InstanceStatus;
 import net.jadedmc.jadedsync.utils.chat.ChatUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -149,6 +153,30 @@ public class Redis {
                                     }
 
                                     return;
+                                }
+
+                                case "connect" -> {
+                                    final Collection<UUID> uuids = new HashSet<>();
+
+                                    for(final String uuid : args[1].split(",")) {
+                                        uuids.add(UUID.fromString(uuid));
+                                    }
+
+                                    for(final UUID uuid : uuids) {
+                                        final Player player = Bukkit.getPlayer(uuid);
+
+                                        if(player == null) {
+                                            continue;
+                                        }
+
+                                        // Creates the message
+                                        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                                        out.writeUTF("Connect");
+                                        out.writeUTF(args[2]);
+
+                                        // Sends the message using the first player online.
+                                        player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+                                    }
                                 }
 
                                 case "integration" -> {
