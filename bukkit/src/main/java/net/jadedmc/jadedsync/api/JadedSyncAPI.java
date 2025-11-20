@@ -30,6 +30,7 @@ import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayerMap;
 import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import net.jadedmc.jadedsync.database.Redis;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 
@@ -167,5 +168,54 @@ public class JadedSyncAPI {
 
     public static void registerIntegration(@NotNull final Integration integration) {
         plugin.getIntegrationManager().registerIntegration(integration);
+    }
+
+    /**
+     * Sends a chat message to a given player over the network, if they are online.
+     * <p>You can use a comma to add multiple UUIDs.</p>
+     * @param uuid UUID (as a String) of the player to send the chat message to.
+     * @param message Chat message to be sent. Supports MiniMessage and Legacy.
+     */
+    public static void sendMessage(@NotNull final String uuid, @NotNull final String message) {
+        plugin.getRedis().publishAsync("jadedsync", "message " + uuid + " " + message);
+    }
+
+    /**
+     * Sends a chat message to a given player over the network, if they are online.
+     * @param uuid UUID of the player to send the chat message to.
+     * @param message Chat message to be sent. Supports MiniMessage and Legacy.
+     */
+    public static void sendMessage(@NotNull final UUID uuid, @NotNull final String message) {
+        sendMessage(uuid.toString(), message);
+    }
+
+    /**
+     * Sends a chat message to a given player over the network, if they are online.
+     * @param jadedSyncPlayer JadedSyncPlayer to send the chat message to.
+     * @param message Chat message to be sent. Supports MiniMessage and Legacy.
+     */
+    public static void sendMessage(@NotNull final JadedSyncPlayer jadedSyncPlayer, @NotNull final String message) {
+        sendMessage(jadedSyncPlayer.getUniqueId(), message);
+    }
+
+    /**
+     * Sends a chat message to a given player over the network, if they are online.
+     * @param offlinePlayer OfflinePlayer to send the chat message to.
+     * @param message Chat message to be sent. Supports MiniMessage and Legacy.
+     */
+    public static void sendMessage(@NotNull final OfflinePlayer offlinePlayer, @NotNull final String message) {
+        sendMessage(offlinePlayer.getUniqueId(), message);
+    }
+
+    /**
+     * Sends a chat message to a group of players over the network, if they are online.
+     * @param uuids UUIDs of the players to send the chat message to.
+     * @param message Chat message to be sent. Supports MiniMessage and Legacy.
+     */
+    public static void sendMessage(@NotNull final Collection<UUID> uuids, @NotNull final String message) {
+        final StringBuilder builder = new StringBuilder();
+        uuids.forEach(uuid -> builder.append(uuid.toString()).append(','));
+
+        sendMessage(builder.substring(0, builder.length() - 1), message);
     }
 }

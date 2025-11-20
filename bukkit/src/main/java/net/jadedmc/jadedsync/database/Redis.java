@@ -27,11 +27,18 @@ package net.jadedmc.jadedsync.database;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.server.InstanceStatus;
+import net.jadedmc.jadedsync.utils.chat.ChatUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * Manages the connection process to Redis.
@@ -152,6 +159,19 @@ public class Redis {
                                     }
 
                                     integration.onMessageReceive(args[2]);
+                                }
+
+                                case "message" -> {
+                                    final Collection<UUID> uuids = new HashSet<>();
+                                    String message = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+
+                                    for(final String uuid : args[1].split(",")) {
+                                        uuids.add(UUID.fromString(uuid));
+                                    }
+
+                                    for(UUID uuid : uuids) {
+                                        ChatUtils.chat(uuid, message);
+                                    }
                                 }
                             }
                         }
