@@ -171,6 +171,15 @@ public class JadedSyncAPI {
     }
 
     /**
+     * Get the current player count across all linked servers.
+     * <p>Updated every 30 seconds.</p>
+     * @return Current cached player count.
+     */
+    public static int getPlayerCount() {
+        return plugin.getInstanceMonitor().getPlayerCount();
+    }
+
+    /**
      * Sends a chat message to a given player over the network, if they are online.
      * <p>You can use a comma to add multiple UUIDs.</p>
      * @param uuid UUID (as a String) of the player to send the chat message to.

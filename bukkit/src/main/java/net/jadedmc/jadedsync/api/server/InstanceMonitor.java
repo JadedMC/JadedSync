@@ -37,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 public class InstanceMonitor {
     private final JadedSyncBukkitPlugin plugin;
     private final CurrentInstance currentInstance;
+    private int playerCount = 0;
 
     /**
      * Creates the InstanceMonitor.
@@ -51,6 +52,19 @@ public class InstanceMonitor {
 
         // Tell the proxies to register the server.
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> plugin.getRedis().publishAsync("jadedsync", "proxy register " + this.currentInstance.getName()), 20);
+
+        // Update player count every 30 seconds.
+        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            getInstancesAsync().thenAccept(instances -> {
+                // Reset cached online count.
+                this.playerCount = 0;
+
+                // Check every online instance.
+                for(final ServerInstance instance : instances) {
+                    this.playerCount += instance.getOnline();
+                }
+            });
+        },0, 30*20);
     }
 
     /**
@@ -169,6 +183,14 @@ public class InstanceMonitor {
      */
     public CompletableFuture<Collection<ServerInstance>> getInstancesAsync() {
         return CompletableFuture.supplyAsync(this::getInstances);
+    }
+
+    /**
+     * Get the current player count across all servers.
+     * @return Current player count.
+     */
+    public int getPlayerCount() {
+        return this.playerCount;
     }
 
     /**
