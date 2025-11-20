@@ -29,6 +29,7 @@ import net.jadedmc.jadedsync.api.integration.Integration;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayer;
 import net.jadedmc.jadedsync.api.player.JadedSyncPlayerMap;
 import net.jadedmc.jadedsync.api.server.CurrentInstance;
+import net.jadedmc.jadedsync.api.server.ServerInstance;
 import net.jadedmc.jadedsync.database.Redis;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -168,6 +169,23 @@ public class JadedSyncAPI {
 
     public static void registerIntegration(@NotNull final Integration integration) {
         plugin.getIntegrationManager().registerIntegration(integration);
+    }
+
+    /**
+     * Gets a collection of all currently cached server instances.
+     * <p><b>Warning: This is done on the thread this is called from. Should be used asynchronously.</b></p>
+     * @return All current server instances.
+     */
+    public static Collection<ServerInstance> getInstances() {
+        return plugin.getInstanceMonitor().getInstances();
+    }
+
+    /**
+     * Gets a collection of all currently cached server instances.
+     * @return All current server instances.
+     */
+    public static CompletableFuture<Collection<ServerInstance>> getInstancesAsync() {
+        return CompletableFuture.supplyAsync(JadedSyncAPI::getInstances);
     }
 
     /**
