@@ -32,6 +32,7 @@ import net.jadedmc.jadedsync.api.server.CurrentInstance;
 import net.jadedmc.jadedsync.api.server.ServerInstance;
 import net.jadedmc.jadedsync.database.Redis;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 
@@ -316,5 +317,19 @@ public class JadedSyncAPI {
      */
     public static void sendToServer(@NotNull final OfflinePlayer offlinePlayer, @NotNull final ServerInstance serverInstance) {
         sendToServer(offlinePlayer.getUniqueId(), serverInstance);
+    }
+
+    /**
+     * Updates the stored integrations of a player. Useful when reading new saved data.
+     * @param player Player to update integrations of.
+     */
+    public static void updatePlayerIntegrations(@NotNull final Player player) {
+        final JadedSyncPlayer jadedSyncPlayer = getPlayer(player.getUniqueId());
+
+        if(jadedSyncPlayer == null) {
+            return;
+        }
+
+        jadedSyncPlayer.updateIntegrations();
     }
 }
