@@ -320,6 +320,38 @@ public class JadedSyncAPI {
     }
 
     /**
+     * Sends a given player to the current server.
+     * @param uuid UUID of the player to summon.
+     */
+    public static void summonPlayer(@NotNull final String uuid) {
+        sendToServer(uuid, plugin.getInstanceMonitor().getCurrentInstance().getName());
+    }
+
+    /**
+     * Sends a player to the current server.
+     * @param uuid UUID of the player to summon.
+     */
+    public static void summonPlayer(@NotNull final UUID uuid) {
+        summonPlayer(uuid.toString());
+    }
+
+    /**
+     * Sends a player to the current server.
+     * @param offlinePlayer Player to summon.
+     */
+    public static void summonPlayer(@NotNull final OfflinePlayer offlinePlayer) {
+        summonPlayer(offlinePlayer.getUniqueId());
+    }
+
+    /**
+     * Sends a group of players to the current server.
+     * @param uuids UUIDs of the players to summon.
+     */
+    public static void summonPlayers(@NotNull final Collection<UUID> uuids) {
+        uuids.forEach(JadedSyncAPI::summonPlayer);
+    }
+
+    /**
      * Updates the stored integrations of a player. Useful when reading new saved data.
      * @param player Player to update integrations of.
      */
