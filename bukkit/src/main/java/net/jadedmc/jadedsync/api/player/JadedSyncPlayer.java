@@ -27,6 +27,7 @@ package net.jadedmc.jadedsync.api.player;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import net.jadedmc.jadedsync.JadedSyncBukkitPlugin;
 import net.jadedmc.jadedsync.api.JadedSyncAPI;
+import net.jadedmc.jadedsync.api.integration.Integration;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +82,6 @@ public class JadedSyncPlayer {
      */
     public JadedSyncPlayer(@NotNull final JadedSyncBukkitPlugin plugin, @NotNull final String json) {
         this.plugin = plugin;
-
         final Document document = Document.parse(json);
 
         this.uuid = UUID.fromString(document.getString("uuid"));
@@ -91,7 +91,7 @@ public class JadedSyncPlayer {
         this.server = document.getString("server");
 
         final Document integrationsDocument = document.get("integrations", Document.class);
-        for(final String integration : integrations.keySet()) {
+        for(final String integration : integrationsDocument.keySet()) {
             this.integrations.put(integration, integrationsDocument.get(integration, Document.class).toJson());
         }
     }
@@ -114,7 +114,7 @@ public class JadedSyncPlayer {
             return this.integrations.get(integration);
         }
 
-        return "";
+        return "{}";
     }
 
     /**
@@ -226,6 +226,8 @@ public class JadedSyncPlayer {
      * Updates the cached data for all integrations.
      */
     public void updateIntegrations() {
-        plugin.getIntegrationManager().getIntegrations().forEach(integration -> this.integrations.put(integration.getId(), integration.getPlayerIntegration(this)));
+        for(@NotNull final Integration integration : plugin.getIntegrationManager().getIntegrations()) {
+            this.integrations.put(integration.getId(), integration.getPlayerIntegration(this));
+        }
     }
 }

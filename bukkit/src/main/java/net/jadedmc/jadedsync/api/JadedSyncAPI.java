@@ -331,5 +331,6 @@ public class JadedSyncAPI {
         }
 
         jadedSyncPlayer.updateIntegrations();
+        jadedSyncPlayer.syncData();
     }
 }
