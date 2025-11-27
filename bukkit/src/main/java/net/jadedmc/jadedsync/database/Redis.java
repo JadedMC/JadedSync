@@ -39,10 +39,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Manages the connection process to Redis.
@@ -124,6 +121,12 @@ public class Redis {
     public String get(@NotNull final String key) {
         try(Jedis jedis = jedisPool.getResource()) {
             return jedis.get(key);
+        }
+    }
+
+    public Set<String> keys(@NotNull final String pattern) {
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.keys(pattern);
         }
     }
 
